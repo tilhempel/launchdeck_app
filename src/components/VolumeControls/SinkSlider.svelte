@@ -2,7 +2,7 @@
     import Slider from "../Slider.svelte";
     import { PipewireVolumeToPercent } from "../../types/Volume";
     import { ws, type WSMessageMap, type WSEventMap } from "../../util/websocketServer";
-  import { Sinks } from "../../util/stateStore";
+  import { Sinks, SinkState, Sources } from "../../util/stateStore";
 
     interface props {
         target?: string,
@@ -14,21 +14,28 @@
 
     let volume = $state(50)
 
-    if (isDefaultDevice) {
-        Sinks.subscribeToDefault((dev) => {
-            
-            if (dev == null) return;
-            if (dev.channel_volumes != undefined) volume = PipewireVolumeToPercent(dev.channel_volumes);            
-        });
-    } else {
-        Sinks.subscribeToList(list => {
-            for (let val of list.values()) {
-                if (target == val.name) {
-                    if (val.channel_volumes != undefined) volume = PipewireVolumeToPercent(val.channel_volumes);
+    let linkedState = $derived(
+        deviceType === "Sink" ? Sinks : Sources
+    );
+
+    $effect(() => {
+        if (isDefaultDevice) {
+                linkedState.subscribeToDefault((dev) => {
+                    console.log(dev);
+                    
+                    if (dev == null) return;
+                    if (dev.channel_volumes != undefined) volume = PipewireVolumeToPercent(dev.channel_volumes);            
+                });
+        } else {
+            linkedState.subscribeToList(list => {
+                for (let val of list.values()) {
+                    if (target == val.name) {
+                        if (val.channel_volumes != undefined) volume = PipewireVolumeToPercent(val.channel_volumes);
+                    }
                 }
-            }
-        });
-    }
+            });
+        }
+    });
 
     function setVolume(value: number) {
         ws.send("volume", {

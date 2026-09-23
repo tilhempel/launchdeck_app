@@ -124,8 +124,6 @@ export const ws = createWebSocketConnection("ws://localhost:8080")
 function handleInitData(data: WSEventMap["InitData"]) {
     Sinks.setDeviceList(data.sinks)
     Sinks.setDefault(data.default_sink)
-    // Sources.setDeviceList(data.sources)
-    // Sources.setDefault(data.default_source)
-    // setContext("defaultSink", data.default_sink)
-    // setContext("defaultSource", data.default_source)
+    Sources.setDeviceList(data.sources)
+    Sources.setDefault(data.default_source)
 }

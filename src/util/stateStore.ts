@@ -1,7 +1,7 @@
 import { get, readable, writable, type Readable, type Subscriber, type Unsubscriber, type Writable } from "svelte/store";
 import type { Device } from "../types/Volume";
 
-class SinkState {
+export class SinkState {
     #default: Writable<Device | null>
     #all: Writable<Map<number, Device>>
     #defaultDevID: number
@@ -61,7 +61,7 @@ class SinkState {
         this.#all.set(m)        
     }
 
-    updateDevice(d: Device) {
+    updateDevice(d: Device) {        
         let m = get(this.#all)
 
         m.set(d.id, d)
