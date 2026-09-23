@@ -14,8 +14,8 @@
   border-radius: 5px;
   padding: 10px;
   box-shadow: none;
-  height: 100px;
-  width: 100px;
+  width: 100%;
+  height: 100%;
 }
 
 .ActionButton > :global(i) {

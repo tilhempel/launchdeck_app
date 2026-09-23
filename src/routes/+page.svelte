@@ -7,23 +7,41 @@
   import ChangeVolume from "../components/VolumeControls/ChangeVolume.svelte";
   import { setContext } from "svelte";
   import { ws, type WSEventMap } from "../util/websocketServer";
+  import Grid from "../pages/Grid.svelte";
+  import GridElement from "../pages/GridElement.svelte";
 </script>
 
 
 
 
 <main class="container">
-  <div class="buttonGrid">
-    <ActionButton onclick={ws.reconnect}>
-      <i class="fa-solid fa-arrow-rotate-right"></i>
-      <span>Reconnect</span>
-    </ActionButton>
-    <ChangeVolume isDefaultDevice value={5} />
-    <ChangeVolume isDefaultDevice value={-5} />
-    <MuteSink isDefaultDevice/>
-    <SinkSlider isDefaultDevice deviceType="Sink" />
-    <SinkSlider isDefaultDevice deviceType="Source" />
-  </div>
+  <Grid rows={5} columns={5} >
+    <GridElement row={1} column={1}>
+      <ActionButton onclick={ws.reconnect}>
+        <i class="fa-solid fa-arrow-rotate-right"></i>
+        <span>Reconnect</span>
+      </ActionButton>
+    </GridElement>
+    <GridElement row={2} column={2}>
+      <ChangeVolume isDefaultDevice value={5} />
+    </GridElement>
+    <GridElement row={3} column={3}>
+      <ChangeVolume isDefaultDevice value={-5} />
+    </GridElement>
+    <GridElement row={4} column={4}>
+      <MuteSink isDefaultDevice/>
+    </GridElement>
+    <GridElement row={2} column={1} rowSpan={2}>
+      <SinkSlider isDefaultDevice deviceType="Sink" vertical/>
+    </GridElement>
+    <GridElement row={1} column={2} columnSpan={2}>
+      <SinkSlider isDefaultDevice deviceType="Sink"/>
+    </GridElement>
+  </Grid><!--
+    <div class="buttonGrid">
+      <SinkSlider isDefaultDevice deviceType="Source" />
+    </div>
+  -->
 </main>
 
 <style>
@@ -52,11 +70,12 @@
 
 .container {
   margin: 0;
-  padding-top: 10vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   text-align: center;
+  height: 100vh;
+  width: 100vw;
 }
 
 .row {

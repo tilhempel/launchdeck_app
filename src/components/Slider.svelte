@@ -50,6 +50,20 @@
         slider.style.background = 'linear-gradient(' + direction + ', ' + stops.join(', ') + ')';
     }
 
+    let container: HTMLDivElement;
+    let sliderLength = $state(0);
+
+    $effect(() => {
+        if (!vertical) return
+        const observer = new ResizeObserver(([entry]) => {
+            sliderLength = entry.contentRect.height;
+        });
+
+        observer.observe(container);
+
+        return () => observer.disconnect();
+    });
+
     onMount(() => {
         update();
     })
@@ -58,8 +72,8 @@
     })
 </script>
 
-<div class="SliderWrapper {vertical ? 'vertical' : ''}">
-    <div class="interimWrapper {vertical ? 'vertical' : ''}">
+<div class="SliderWrapper {vertical ? 'vertical' : ''}" bind:this={container}>
+    <div class="interimWrapper {vertical ? 'vertical' : ''}" style={`width: ${vertical ? (sliderLength + "px") : "100%"}`}>
         {#if showValue || showIcon}
             <div class="descriptionWrapper {vertical ? 'vertical' : ''}">
                 {#if showValue}
@@ -83,30 +97,27 @@
 <style>
 
 .SliderWrapper {
+    width: 100%;
+    height: 100%;
     display: flex;
-    align-items: center;
-    justify-content: center;
     flex-direction: row;
+    align-items: center;
 }
 
 .SliderWrapper.vertical {
-    width: 30px;
-    height: 330px;
+    position: relative;
 }
 
-.SliderWrapper .descriptionWrapper {
-    width: 30px;
-    height: 30px;
-}
 .interimWrapper {
     display: flex;
     align-items: center;
-    justify-content: center;
 }
 .interimWrapper.vertical {
-    flex-shrink: 0;
-    transform: rotate(-90deg);
-    transform-origin: center;
+    position: absolute;
+    width: 100%;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) rotate(-90deg);
 }
 
 .descriptionWrapper {
@@ -122,9 +133,10 @@
     appearance: none;
     border-radius: 3px;
     background: linear-gradient(to right, #1D9E75 0%, #1D9E75 66.67%, #D85A30 66.67%, #D85A30 100%);
+    writing-mode: vertical-lr;
     outline: none;
     cursor: pointer;
-    width: 300px;
+    width: 100%;
     height: 15px;
 }
 

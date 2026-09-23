@@ -7,10 +7,11 @@
     interface props {
         target?: string,
         isDefaultDevice?: boolean,
-        deviceType: 'Sink' | 'Source'
+        deviceType: 'Sink' | 'Source',
+        vertical?: boolean
     }
 
-    let { target = "", isDefaultDevice = false, deviceType }: props = $props()
+    let { target = "", isDefaultDevice = false, deviceType, vertical = false}: props = $props()
 
     let volume = $state(50)
 
@@ -49,6 +50,6 @@
         })
     }
 </script>
-<Slider min=0 max=150 step=1 showValue vertical steps={["0", "100", "150"]} value={volume}  onUpdate={(val: number) => setVolume(val)}>
+<Slider min=0 max=150 step=1 showValue vertical={vertical} steps={["0", "100", "150"]} value={volume}  onUpdate={(val: number) => setVolume(val)}>
     <i class="fa-solid fa-volume-high"></i>
 </Slider>
