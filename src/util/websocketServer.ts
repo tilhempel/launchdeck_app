@@ -1,6 +1,5 @@
 import { writable, type Readable } from "svelte/store";
 import type { DefaultDeviceUpdateEvent, BasicVolumeEvent, VolumeUpdateEvent, VolumeChangeEvent, VolumeSetEvent, Device, Application } from "../types/Volume";
-import { setContext } from "svelte";
 
 import { Sinks, Sources } from "./stateStore";
 

@@ -1,6 +1,6 @@
 <script lang="ts">
     import ActionButton from "../ActionButton.svelte";
-    import { ws, type WSMessageMap, type WSEventMap } from "../../util/websocketServer";
+    import { ws } from "../../util/websocketServer";
 
     interface props {
         target?: string,

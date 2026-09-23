@@ -1,7 +1,7 @@
 import { get, readable, writable, type Readable, type Subscriber, type Unsubscriber, type Writable } from "svelte/store";
 import type { Device } from "../types/Volume";
 
-export class SinkState {
+export class DeviceState {
     #default: Writable<Device | null>
     #all: Writable<Map<number, Device>>
     #defaultDevID: number
@@ -79,5 +79,5 @@ export class SinkState {
     }
 }
 
-export const Sinks = new SinkState(null, [])
-export const Sources = new SinkState(null, [])
+export const Sinks = new DeviceState(null, [])
+export const Sources = new DeviceState(null, [])

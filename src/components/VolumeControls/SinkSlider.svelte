@@ -1,8 +1,8 @@
 <script lang="ts">
     import Slider from "../Slider.svelte";
     import { PipewireVolumeToPercent } from "../../types/Volume";
-    import { ws, type WSMessageMap, type WSEventMap } from "../../util/websocketServer";
-  import { Sinks, SinkState, Sources } from "../../util/stateStore";
+    import { ws } from "../../util/websocketServer";
+  import { Sinks, Sources } from "../../util/stateStore";
 
     interface props {
         target?: string,
