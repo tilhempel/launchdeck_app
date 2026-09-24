@@ -8,8 +8,13 @@
   import Grid from "../pages/Grid.svelte";
   import GridElement from "../pages/GridElement.svelte";
   import type { Application } from "../types/Volume";
+  import { Applications } from "../util/stateStore";
 
-  let apps: Application | null = $state(null)
+  let apps: Map<number, Application> | null = $state(null)
+
+  Applications.subscribeToList((val) => {
+    apps = val
+  });
 
 </script>
 
@@ -35,6 +40,13 @@
     </GridElement>
     <GridElement row={1} column={2} columnSpan={2}>
       <SinkSlider isDefaultDevice deviceType="Sink"/>
+    </GridElement>
+    <GridElement row={5} column={1} columnSpan={2}>
+    {#if apps != null}
+      {#each apps.values() as app}
+        <SinkSlider deviceType="Application" target={app.id} />
+      {/each}
+    {/if}
     </GridElement>
   </Grid>
 </main>

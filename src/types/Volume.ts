@@ -21,7 +21,7 @@ export interface Application {
     media_name: String,
     id: number,
     mute?: boolean,
-    channel_volume?: number[]
+    channel_volumes?: number[]
 }
 
 

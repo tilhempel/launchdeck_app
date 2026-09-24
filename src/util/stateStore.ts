@@ -1,5 +1,5 @@
 import { get, readable, writable, type Readable, type Subscriber, type Unsubscriber, type Writable } from "svelte/store";
-import type { Device } from "../types/Volume";
+import type { Application, Device } from "../types/Volume";
 
 export class DeviceState {
     #default: Writable<Device | null>
@@ -79,5 +79,42 @@ export class DeviceState {
     }
 }
 
+class ApplicationState {
+    #list: Writable<Map<number, Application>>
+
+    constructor(apps: Application[] | null) {
+        this.#list = writable(new Map<number, Application>());
+        if (apps != null) {
+            this.setAppList(apps)
+        }
+    }
+
+    setAppList(apps: Application[]) {
+        let m = new Map<number, Application>();
+        for (let app of apps) {
+            m.set(app.id, app)
+        }
+        this.#list.set(m)
+    }
+
+    removeFromList(app: Application) {
+        let m = get(this.#list)
+        m.delete(app.id)
+        this.#list.set(m)
+    }
+
+    updateApp(app: Application) {
+        let m = get(this.#list)
+        m.set(app.id, app)
+        this.#list.set(m)
+    }
+
+    subscribeToList(run: Subscriber<Map<number, Application>>, invalidate?: () => void): Unsubscriber {
+        return this.#list.subscribe(run, invalidate)
+    }
+
+}
+
 export const Sinks = new DeviceState(null, [])
 export const Sources = new DeviceState(null, [])
+export const Applications = new ApplicationState(null)

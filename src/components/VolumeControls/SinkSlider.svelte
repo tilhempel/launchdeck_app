@@ -2,12 +2,12 @@
     import Slider from "../Slider.svelte";
     import { PipewireVolumeToPercent } from "../../types/Volume";
     import { ws } from "../../util/websocketServer";
-  import { Sinks, Sources } from "../../util/stateStore";
+  import { Applications, Sinks, Sources } from "../../util/stateStore";
 
     interface props {
-        target?: string,
+        target?: string | number,
         isDefaultDevice?: boolean,
-        deviceType: 'Sink' | 'Source',
+        deviceType: 'Sink' | 'Source' | 'Application',
         vertical?: boolean
     }
 
@@ -20,10 +20,18 @@
     );
 
     $effect(() => {
+        if (deviceType == "Application") {
+            Applications.subscribeToList((apps) => {
+                for (let app of apps.values()) {
+                    if (app.id == target) {
+                        if (app.channel_volumes != undefined) volume = PipewireVolumeToPercent(app.channel_volumes);
+                    }
+                }
+            });
+            return
+        }
         if (isDefaultDevice) {
                 linkedState.subscribeToDefault((dev) => {
-                    console.log(dev);
-                    
                     if (dev == null) return;
                     if (dev.channel_volumes != undefined) volume = PipewireVolumeToPercent(dev.channel_volumes);            
                 });
