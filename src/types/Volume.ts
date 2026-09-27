@@ -6,12 +6,14 @@ export function PipewireVolumeToPercent(channelVolumes: number[]): number {
     return Math.max(...channelVolumes.map((vol) => pwVolToPerc(vol)))
 }
 
-export interface Device {
+export interface Node {
     name: String,
     description: String,
     id: number,
     mute?: boolean,
-    channel_volumes?: number[]
+    channel_volumes?: number[],
+    device_id?: number,
+    route_device?: number
 }
 
 export interface Application {
@@ -29,7 +31,7 @@ export interface Application {
 // incoming events
 export interface VolumeUpdateEvent {
     class: String,
-    emitter: Device | Application
+    emitter: Node | Application
 }
 
 export interface DefaultDeviceUpdateEvent {

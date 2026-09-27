@@ -1,5 +1,5 @@
 import { writable, type Readable } from "svelte/store";
-import type { DefaultDeviceUpdateEvent, BasicVolumeEvent, VolumeUpdateEvent, VolumeChangeEvent, VolumeSetEvent, Device, Application } from "../types/Volume";
+import type { DefaultDeviceUpdateEvent, BasicVolumeEvent, VolumeUpdateEvent, VolumeChangeEvent, VolumeSetEvent, Node, Application } from "../types/Volume";
 
 import { Applications, Sinks, Sources } from "./stateStore";
 
@@ -9,8 +9,8 @@ export interface WSEventMap {
     InitData: {
         default_sink: string,
         default_source: string,
-        sinks: Device[],
-        sources: Device[],
+        sinks: Node[],
+        sources: Node[],
         applications: Application[]
     }
 }
@@ -79,10 +79,10 @@ function createWebSocketConnection(url: string): WebSocketStore {
                 case "Volume":
                     let p = (payload as unknown as WSEventMap[typeof type])
                     if (p.class == "Audio/Sink") {                        
-                        Sinks.updateDevice(p.emitter as Device);
+                        Sinks.updateDevice(p.emitter as Node);
                     }
                     if (p.class == "Audio/Source") {
-                        Sources.updateDevice(p.emitter as Device);
+                        Sources.updateDevice(p.emitter as Node);
                     }
                     if (p.class == "Stream/Output/Audio") {
                         Applications.updateApp(p.emitter as Application)
