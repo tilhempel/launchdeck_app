@@ -11,7 +11,7 @@
         vertical?: boolean
     }
 
-    let { target = "", isDefaultDevice = false, deviceType, vertical = false}: props = $props()
+    let { target = 0, isDefaultDevice = false, deviceType, vertical = false}: props = $props()
 
     let volume = $state(50)
 
@@ -47,11 +47,12 @@
     });
 
     function setVolume(value: number) {
+        
         ws.send("volume", {
             payload: {
-                action: (deviceType == "Sink") ? "SetSinkVolume" : "SetSourceVolume",
+                action: (deviceType == "Sink") ? "SetSinkVolume" : (deviceType == "Source") ? "SetSourceVolume" : "SetAppVolume",
                 data: {
-                    target: 0,
+                    target: target,
                     value: value
                 }
             }
