@@ -1,33 +1,33 @@
 import { get, readable, writable, type Readable, type Subscriber, type Unsubscriber, type Writable } from "svelte/store";
-import type { Application, Device } from "../types/Volume";
+import type { Application, Node } from "../types/Volume";
 
-export class DeviceState {
-    #default: Writable<Device | null>
-    #all: Writable<Map<number, Device>>
+export class NodeState {
+    #default: Writable<Node | null>
+    #all: Writable<Map<number, Node>>
     #defaultDevID: number
 
 
-    constructor(defaultDev: Device | null, deviceList: Device[]) {
+    constructor(defaultDev: Node | null, deviceList: Node[]) {
         if (defaultDev != null) {
             this.#defaultDevID = defaultDev.id;
         } else {
             this.#defaultDevID = 0
         }
         this.#default = writable(defaultDev);
-        this.#all = writable(new Map<number, Device>())
+        this.#all = writable(new Map<number, Node>())
         if (deviceList != null) {
-            this.setDeviceList(deviceList)
+            this.setNodeList(deviceList)
         }
     }
 
-    setDeviceList(devices: Device[]) {
-        let m = new Map<number, Device>()
+    setNodeList(devices: Node[]) {
+        let m = new Map<number, Node>()
         for (let dev of devices) {
             m.set(dev.id, dev)
         }
         this.#all.set(m);
     }
-    setDefault(newDefault: Device | number | String) {
+    setDefault(newDefault: Node | number | String) {
         switch (typeof newDefault) {
             case "string":
                 for (let v of get(this.#all).values()) {
@@ -47,11 +47,11 @@ export class DeviceState {
                 this.#default.set(newDev)
                 this.#defaultDevID = newDev.id
             default:
-                this.#default.set(newDefault as Device);
-                this.#defaultDevID = (newDefault as Device).id
+                this.#default.set(newDefault as Node);
+                this.#defaultDevID = (newDefault as Node).id
         }
     }
-    removeFromDeviceList(target: Device | number) {
+    removeNode(target: Node | number) {
         let m = get(this.#all);
         if (typeof target ==  "number") {
             m.delete(target)
@@ -61,7 +61,7 @@ export class DeviceState {
         this.#all.set(m)        
     }
 
-    updateDevice(d: Device) {        
+    updateNode(d: Node) {        
         let m = get(this.#all)
 
         m.set(d.id, d)
@@ -71,15 +71,15 @@ export class DeviceState {
         }
     }
 
-    subscribeToDefault(run: Subscriber<Device | null>, invalidate?: () => void): Unsubscriber {
+    subscribeToDefault(run: Subscriber<Node | null>, invalidate?: () => void): Unsubscriber {
         return this.#default.subscribe(run, invalidate);
     }
-    subscribeToList(run: Subscriber<Map<number, Device>>, invalidate?: () => void): Unsubscriber {
+    subscribeToList(run: Subscriber<Map<number, Node>>, invalidate?: () => void): Unsubscriber {
         return this.#all.subscribe(run, invalidate)
     }
 }
 
-class ApplicationState {
+export class ApplicationState {
     #list: Writable<Map<number, Application>>
 
     constructor(apps: Application[] | null) {
@@ -97,7 +97,7 @@ class ApplicationState {
         this.#list.set(m)
     }
 
-    removeFromList(app: Application) {
+    removeApp(app: Application) {
         let m = get(this.#list)
         m.delete(app.id)
         this.#list.set(m)
@@ -115,6 +115,6 @@ class ApplicationState {
 
 }
 
-export const Sinks = new DeviceState(null, [])
-export const Sources = new DeviceState(null, [])
+export const Sinks = new NodeState(null, [])
+export const Sources = new NodeState(null, [])
 export const Applications = new ApplicationState(null)

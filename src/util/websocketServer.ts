@@ -79,10 +79,10 @@ function createWebSocketConnection(url: string): WebSocketStore {
                 case "Volume":
                     let p = (payload as unknown as WSEventMap[typeof type])
                     if (p.class == "Audio/Sink") {                        
-                        Sinks.updateDevice(p.emitter as Node);
+                        Sinks.updateNode(p.emitter as Node);
                     }
                     if (p.class == "Audio/Source") {
-                        Sources.updateDevice(p.emitter as Node);
+                        Sources.updateNode(p.emitter as Node);
                     }
                     if (p.class == "Stream/Output/Audio") {
                         Applications.updateApp(p.emitter as Application)
@@ -124,9 +124,9 @@ export const ws = createWebSocketConnection("ws://localhost:8080")
 
 
 function handleInitData(data: WSEventMap["InitData"]) {
-    Sinks.setDeviceList(data.sinks)
+    Sinks.setNodeList(data.sinks)
     Sinks.setDefault(data.default_sink)
-    Sources.setDeviceList(data.sources)
+    Sources.setNodeList(data.sources)
     Sources.setDefault(data.default_source)
     Applications.setAppList(data.applications)
 }

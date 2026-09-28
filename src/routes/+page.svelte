@@ -1,8 +1,8 @@
 <script lang="ts">
 
   import ActionButton from "../components/ActionButton.svelte";
-  import SinkSlider from "../components/VolumeControls/SinkSlider.svelte";
-  import MuteSink from "../components/VolumeControls/MuteSink.svelte";
+  import VolumeSlider from "../components/VolumeControls/VolumeSlider.svelte";
+  import MuteButton from "../components/VolumeControls/MuteButton.svelte";
   import ChangeVolume from "../components/VolumeControls/ChangeVolume.svelte";
   import { ws } from "../util/websocketServer";
   import Grid from "../pages/Grid.svelte";
@@ -33,18 +33,18 @@
       <ChangeVolume isDefaultDevice value={-5} />
     </GridElement>
     <GridElement row={4} column={4}>
-      <MuteSink isDefaultDevice/>
+      <MuteButton isDefaultDevice deviceType="Sink"/>
     </GridElement>
     <GridElement row={2} column={1} rowSpan={2}>
-      <SinkSlider isDefaultDevice deviceType="Sink" vertical/>
+      <VolumeSlider isDefaultDevice deviceType="Sink" vertical/>
     </GridElement>
     <GridElement row={1} column={2} columnSpan={2}>
-      <SinkSlider isDefaultDevice deviceType="Sink"/>
+      <VolumeSlider isDefaultDevice deviceType="Sink"/>
     </GridElement>
     <GridElement row={5} column={1} columnSpan={2}>
     {#if apps != null}
       {#each apps.values() as app}
-        <SinkSlider deviceType="Application" target={app.id} />
+        <VolumeSlider deviceType="Application" target={app.id} />
       {/each}
     {/if}
     </GridElement>
