@@ -14,8 +14,9 @@
         showIcon?: boolean
         children?: any
         value?: number
+        onLabelClick?: Function
     }
-    let {min, max, step=1, vertical=false, steps, highlight = "#ccc", danger = "#00F", onUpdate, showValue = false, showIcon = false, children = null, value = 0}: props = $props();
+    let {min, max, step=1, vertical=false, steps, highlight = "#ccc", danger = "#00F", onUpdate, showValue = false, showIcon = false, children = null, value = 0, onLabelClick}: props = $props();
 
     let slider: HTMLInputElement;
 
@@ -75,14 +76,14 @@
 <div class="SliderWrapper {vertical ? 'vertical' : ''}" bind:this={container}>
     <div class="interimWrapper {vertical ? 'vertical' : ''}" style={`width: ${vertical ? (sliderLength + "px") : "100%"}`}>
         {#if showValue || showIcon}
-            <div class="descriptionWrapper {vertical ? 'vertical' : ''}">
+            <button class="descriptionWrapper {vertical ? 'vertical' : ''} {onLabelClick != undefined ? 'labelButton': ''}" onclick={() => {if (onLabelClick != undefined) {onLabelClick()}}} style="{showValue ? 'padding-top: 3px;' : ''}">
                 {#if showValue}
                     <span>{value}</span>
                 {/if}
                 {#if showIcon} 
                     {@render children()}
                 {/if}
-            </div>
+            </button>
         {/if}
         <input type="range" bind:this={slider} value={value} onmouseup={() => onUpdate(+slider.value)} oninput={update} id="inputSlider" min={min} max={max} step={step} class="SliderInput" list="steps">
     </div>
@@ -111,6 +112,8 @@
 .interimWrapper {
     display: flex;
     align-items: center;
+    height: 25px;
+    justify-content: space-between;
 }
 .interimWrapper.vertical {
     position: absolute;
@@ -121,11 +124,23 @@
 }
 
 .descriptionWrapper {
-    line-height: 30px;
+    all: unset;
+    align-self: stretch;   /* same height as the row, so its center == the slider's center */
+    width: 5%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    box-sizing: border-box;
+}
+
+.descriptionWrapper.labelButton {
+    cursor: pointer;
 }
 
 .descriptionWrapper.vertical {
     transform: rotate(90deg);
+    padding-right: 1px;
 }
 
 .SliderInput {
@@ -133,11 +148,11 @@
     appearance: none;
     border-radius: 3px;
     background: linear-gradient(to right, #1D9E75 0%, #1D9E75 66.67%, #D85A30 66.67%, #D85A30 100%);
-    writing-mode: vertical-lr;
     outline: none;
     cursor: pointer;
-    width: 100%;
+    width: 93.5%;
     height: 15px;
+    margin: 0;
 }
 
 .SliderInput::-webkit-slider-thumb {
