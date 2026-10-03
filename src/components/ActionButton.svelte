@@ -35,7 +35,7 @@
 @media (prefers-color-scheme: dark) {
   .ActionButton {
     color: #ffffff;
-    background-color: #0f0f0f98;
+    background-color: var(--color-level-dark);
   }
   .ActionButton:active {
     background-color: #0f0f0f69;

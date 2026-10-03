@@ -16,9 +16,10 @@
         value?: number
         onLabelClick?: Function
     }
-    let {min, max, step=1, vertical=false, steps, highlight = "#ccc", danger = "#00F", onUpdate, showValue = false, showIcon = false, children = null, value = 0, onLabelClick}: props = $props();
+    let {min, max, step=1, vertical=false, steps, highlight = "#ccc", danger = "red", onUpdate, showValue = false, showIcon = false, children = null, value = 0, onLabelClick}: props = $props();
 
     let slider: HTMLInputElement;
+    let trackColor = 'orange'
 
     function update() {
         if (steps == undefined || steps.length <1) return;
@@ -26,7 +27,6 @@
         value = +slider.value;
         let perc = (value-(+min)) / (+max-(+min)) * 100;
         let cutoff = (+steps[steps.length-2] -(+min)) / (+max-(+min)) * 100
-        const track = 'green';
 
         
         let stops;
@@ -34,8 +34,8 @@
             stops = [
                 highlight + ' 0%',
                 highlight + ' ' + perc + '%',
-                track + ' ' + perc + '%',
-                track + ' 100%'
+                trackColor + ' ' + perc + '%',
+                trackColor + ' 100%'
             ];
         } else {
             stops = [
@@ -43,8 +43,8 @@
                 highlight + ' ' + cutoff + '%',   // close out highlight here
                 danger + ' ' + cutoff + '%',      // then start danger, same position
                 danger + ' ' + perc + '%',
-                track + ' ' + perc + '%',
-                track + ' 100%'
+                trackColor + ' ' + perc + '%',
+                trackColor + ' 100%'
             ];
         }
         const direction = 'to right';
@@ -55,6 +55,13 @@
     let sliderLength = $state(0);
 
     $effect(() => {
+        const styles = getComputedStyle(document.documentElement)
+
+        highlight = styles.getPropertyValue("--accent").trim()
+        trackColor = styles.getPropertyValue("--color-level-dark").trim()
+
+
+
         if (!vertical) return
         const observer = new ResizeObserver(([entry]) => {
             sliderLength = entry.contentRect.height;
@@ -160,17 +167,17 @@
   appearance: none;
   width: 25px;
   height: 25px;
-  background: #04AA6D;
+  background: var(--color-dark);
   cursor: pointer;
-  border-radius: 10px;
+  border-radius: 15px;
 }
 
 .SliderInput::-moz-range-thumb {
   width: 25px;
   height: 25px;
-  background: #04AA6D;
+  background: var(--color-dark);
   box-shadow: none;
   cursor: pointer;
-  border-radius: 3px;
+  border-radius: 15px;
 }
 </style>
