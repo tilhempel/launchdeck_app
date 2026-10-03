@@ -9,8 +9,16 @@
   import GridElement from "../pages/GridElement.svelte";
   import type { Application } from "../types/Volume";
   import { Applications } from "../util/stateStore";
+  import { parseConfig } from "../util/layoutConfig";
+  import UIRenderer from "../util/UIRenderer.svelte";
 
   let apps: Map<number, Application> | null = $state(null)
+
+  let config = parseConfig("");
+
+  let root = parseConfig("").get("root")
+  
+
 
   Applications.subscribeToList((val) => {
     apps = val
@@ -19,10 +27,13 @@
 </script>
 
 <main class="container">
-  <Grid rows={5} columns={5} >
+  {#if root != undefined}
+  <Grid rows={root[0].rows} columns={root[0].columns} > 
+      <UIRenderer elements={root[1]} />
+  <!--
     <GridElement row={1} column={1}>
       <ActionButton onclick={ws.reconnect}>
-        <i class="fa-solid fa-arrow-rotate-right"></i>
+        <i class="fa-solid fa-arrow-rotate-right"></i> <br>
         <span>Reconnect</span>
       </ActionButton>
     </GridElement>
@@ -47,8 +58,9 @@
         <VolumeSlider deviceType="Application" target={app.id} />
       {/each}
     {/if}
-    </GridElement>
+    </GridElement>-->
   </Grid>
+  {/if}
 </main>
 
 <style>

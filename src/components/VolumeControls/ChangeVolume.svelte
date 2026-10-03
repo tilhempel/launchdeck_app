@@ -2,7 +2,7 @@
     import ActionButton from "../ActionButton.svelte";
     import { ws } from "../../util/websocketServer";
 
-    interface props {
+    export interface props {
         target?: string,
         isDefaultDevice?: boolean,
         value: number
