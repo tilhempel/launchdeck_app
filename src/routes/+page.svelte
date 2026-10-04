@@ -1,23 +1,17 @@
 <script lang="ts">
-
-  import ActionButton from "../components/ActionButton.svelte";
-  import VolumeSlider from "../components/VolumeControls/VolumeSlider.svelte";
-  import MuteButton from "../components/VolumeControls/MuteButton.svelte";
-  import ChangeVolume from "../components/VolumeControls/ChangeVolume.svelte";
-  import { ws } from "../util/websocketServer";
   import Grid from "../pages/Grid.svelte";
-  import GridElement from "../pages/GridElement.svelte";
   import type { Application } from "../types/Volume";
   import { Applications } from "../util/stateStore";
-  import { parseConfig } from "../util/layoutConfig";
+  import { type GridConfig, type GridItem } from "../util/layoutConfig";
   import UIRenderer from "../util/UIRenderer.svelte";
+  import { PageManager } from "../util/layoutHandler";
 
   let apps: Map<number, Application> | null = $state(null)
+  let activePage: [GridConfig, GridItem[]] | null = $state(null);
 
-  let config = parseConfig("");
-
-  let root = parseConfig("").get("root")
-  
+  PageManager.subscribeToActivePage(page => {
+    activePage = page
+  });
 
 
   Applications.subscribeToList((val) => {
@@ -27,38 +21,9 @@
 </script>
 
 <main class="container">
-  {#if root != undefined}
-  <Grid rows={root[0].rows} columns={root[0].columns} > 
-      <UIRenderer elements={root[1]} />
-  <!--
-    <GridElement row={1} column={1}>
-      <ActionButton onclick={ws.reconnect}>
-        <i class="fa-solid fa-arrow-rotate-right"></i> <br>
-        <span>Reconnect</span>
-      </ActionButton>
-    </GridElement>
-    <GridElement row={2} column={2}>
-      <ChangeVolume isDefaultDevice value={5} />
-    </GridElement>
-    <GridElement row={3} column={3}>
-      <ChangeVolume isDefaultDevice value={-5} />
-    </GridElement>
-    <GridElement row={4} column={4}>
-      <MuteButton isDefaultDevice deviceType="Sink"/>
-    </GridElement>
-    <GridElement row={2} column={1} rowSpan={2}>
-      <VolumeSlider isDefaultDevice deviceType="Sink" vertical/>
-    </GridElement>
-    <GridElement row={1} column={2} columnSpan={2}>
-      <VolumeSlider isDefaultDevice deviceType="Sink"/>
-    </GridElement>
-    <GridElement row={5} column={1} columnSpan={2}>
-    {#if apps != null}
-      {#each apps.values() as app}
-        <VolumeSlider deviceType="Application" target={app.id} />
-      {/each}
-    {/if}
-    </GridElement>-->
+  {#if activePage != null}
+  <Grid rows={activePage[0].rows} columns={activePage[0].columns} > 
+      <UIRenderer elements={activePage[1]} />
   </Grid>
   {/if}
 </main>

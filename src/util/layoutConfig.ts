@@ -5,6 +5,7 @@ import ChangeVolume from "../components/VolumeControls/ChangeVolume.svelte";
 import GridElement from "../pages/GridElement.svelte";
 import MuteButton from "../components/VolumeControls/MuteButton.svelte";
 import VolumeSlider from "../components/VolumeControls/VolumeSlider.svelte";
+import PageChangeButton from "../components/Controls/PageChangeButton.svelte";
 
 export interface UIElement {
     component: Component<any>,
@@ -12,7 +13,7 @@ export interface UIElement {
     children?: UIElement[]
 }
 
-interface GridItem {
+export interface GridItem {
     component: Component<any>,
     children?: UIElement[],
     props: {
@@ -22,7 +23,7 @@ interface GridItem {
         columnSpan?: number
     }
 }
-interface GridConfig {
+export interface GridConfig {
     rows: number,
     columns: number
 }
@@ -71,11 +72,19 @@ const VolumeSliderSchema = ElementSchema.extend({
 
 type VolumeSliderType = z.infer<typeof VolumeSliderSchema>
 
+const PageChangeButtonSchema = ElementSchema.extend({
+    type: z.literal("pageChangeButton"),
+    target: z.string()
+})
+
+type PageChangeButtonType = z.infer<typeof PageChangeButtonSchema>
+
 
 const ElementUnionSchema = z.discriminatedUnion("type", [
     VolumeButtonSchema,
     MuteButtonSchema,
-    VolumeSliderSchema
+    VolumeSliderSchema,
+    PageChangeButtonSchema
 ])
 
 // =================
@@ -97,53 +106,11 @@ const ConfigSchema = z.object({
 })
 type Config = z.infer<typeof ConfigSchema>
 
-const text = `
-pages:
-  - name: root
-    grid:
-      rows: 5
-      columns: 5
-    elements:
-      - type: changeVolume
-        target: 
-          type: Sink
-          value: default
-        value: 5
-        position:
-          row: 1
-          column: 1
-      - type: mute
-        target:
-            type: Sink
-            value: default
-        position:
-            row: 1
-            column: 2
-      - type: volumeSlider
-        target:
-            type: Sink
-            value: default
-        vertical: false
-        position:
-            row: 1
-            column: 3
-            columnSpan: 2
-      - type: volumeSlider
-        target:
-            type: Sink
-            value: default
-        vertical: true
-        position:
-            row: 2
-            column: 1
-            rowSpan: 2
-`
 
 
-
-export function parseConfig(path: String): Map<string, [GridConfig, GridItem[]]> {
+export function parseConfig(path: string): Map<string, [GridConfig, GridItem[]]> {
     let layout = new Map<string, [GridConfig, GridItem[]]>();
-    const data = YAML.parse(text)
+    const data = YAML.parse(path)
 
     const res = ConfigSchema.safeParse(data)
     if (!res.success) {
@@ -175,6 +142,9 @@ function parsePage(p: Page): [string, GridConfig, GridItem[]] {
             case "volumeSlider":
                 uiElem = parseVolumeSlider(e)
                 break;
+            case "pageChangeButton":
+                uiElem = parsePageChangeButton(e)
+                break;
             default:
                 continue;
         }
@@ -190,7 +160,6 @@ function parsePage(p: Page): [string, GridConfig, GridItem[]] {
         });
         
     }
-    
     
     return [
         p.name,
@@ -228,6 +197,15 @@ function parseVolumeSlider(s: VolumeSliderType): UIElement {
             target: s.target.value == "default" ? 0 : s.target.value,
             deviceType: s.target.type,
             vertical: s.vertical
+        }
+    }
+}
+
+function parsePageChangeButton(b: PageChangeButtonType): UIElement {
+    return {
+        component: PageChangeButton,
+        props: {
+            target: b.target
         }
     }
 }
