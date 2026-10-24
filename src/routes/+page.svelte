@@ -5,12 +5,25 @@
   import { type GridConfig, type GridItem } from "../util/layoutConfig";
   import UIRenderer from "../util/UIRenderer.svelte";
   import { PageManager } from "../util/layoutHandler";
+  import IslandWrapper from "../components/InfoIsland/IslandWrapper.svelte";
+  import { islands } from "../components/InfoIsland/InfoHandler.svelte";
 
   let apps: Map<number, Application> | null = $state(null)
   let activePage: [GridConfig, GridItem[]] | null = $state(null);
 
   PageManager.subscribeToActivePage(page => {
     activePage = page
+
+    islands.info("page changed", {
+      details: "ztestgdfhsdfzngfgb dfbnvkdjf d fyd fhyjld hf hjfdj hbfdyhjd lf jyhbf khjykybvua hil"
+    });
+    islands.warning("page changed", {
+      details: "ztestgdfhsdfzngfgb dfbnvkdjf d fyd fhyjld hf hjfdj hbfdyhjd lf jyhbf khjykybvua hil"
+    });
+
+    islands.error("page changed", {
+      details: "ztestgdfhsdfzngfgb dfbnvkdjf d fyd fhyjld hf hjfdj hbfdyhjd lf jyhbf khjykybvua hil"
+    });
   });
 
 
@@ -19,6 +32,8 @@
   });
 
 </script>
+
+<IslandWrapper />
 
 <main class="container">
   {#if activePage != null}
