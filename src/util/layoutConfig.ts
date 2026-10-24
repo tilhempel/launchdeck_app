@@ -205,7 +205,8 @@ function parsePageChangeButton(b: PageChangeButtonType): UIElement {
     return {
         component: PageChangeButton,
         props: {
-            target: b.target
+            target: b.target,
+            back : b.target == "back"
         }
     }
 }
