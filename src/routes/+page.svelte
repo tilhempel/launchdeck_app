@@ -13,17 +13,6 @@
 
   PageManager.subscribeToActivePage(page => {
     activePage = page
-
-    islands.info("page changed", {
-      details: "ztestgdfhsdfzngfgb dfbnvkdjf d fyd fhyjld hf hjfdj hbfdyhjd lf jyhbf khjykybvua hil"
-    });
-    islands.warning("page changed", {
-      details: "ztestgdfhsdfzngfgb dfbnvkdjf d fyd fhyjld hf hjfdj hbfdyhjd lf jyhbf khjykybvua hil"
-    });
-
-    islands.error("page changed", {
-      details: "ztestgdfhsdfzngfgb dfbnvkdjf d fyd fhyjld hf hjfdj hbfdyhjd lf jyhbf khjykybvua hil"
-    });
   });
 
 

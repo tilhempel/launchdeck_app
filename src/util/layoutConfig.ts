@@ -6,6 +6,7 @@ import GridElement from "../pages/GridElement.svelte";
 import MuteButton from "../components/VolumeControls/MuteButton.svelte";
 import VolumeSlider from "../components/VolumeControls/VolumeSlider.svelte";
 import PageChangeButton from "../components/Controls/PageChangeButton.svelte";
+import { islands } from "../components/InfoIsland/InfoHandler.svelte";
 
 export interface UIElement {
     component: Component<any>,
@@ -114,7 +115,7 @@ export function parseConfig(path: string): Map<string, [GridConfig, GridItem[]]>
 
     const res = ConfigSchema.safeParse(data)
     if (!res.success) {
-        console.error("Could not parse config file: " + res.error)
+        islands.error("Could not parse config file", {details: res.error})
         return layout;
     }
     const config = res.data
@@ -146,6 +147,9 @@ function parsePage(p: Page): [string, GridConfig, GridItem[]] {
                 uiElem = parsePageChangeButton(e)
                 break;
             default:
+                islands.warning("Config Item could not be parsed", {
+                    details: "Element: \n" + e
+                })
                 continue;
         }
         elems.push({

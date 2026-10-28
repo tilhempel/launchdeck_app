@@ -2,6 +2,7 @@ import { writable, type Readable } from "svelte/store";
 import type { DefaultDeviceUpdateEvent, BasicVolumeEvent, VolumeUpdateEvent, VolumeChangeEvent, VolumeSetEvent, Node, Application } from "../types/Volume";
 
 import { Applications, Sinks, Sources } from "./stateStore";
+import { islands } from "../components/InfoIsland/InfoHandler.svelte";
 
 export interface WSEventMap {
     Volume: VolumeUpdateEvent;
@@ -49,16 +50,20 @@ function createWebSocketConnection(url: string): WebSocketStore {
         status: "connecting",
         error: null
     });
+    
     const events = new EventTarget();
-
+    
     let socket: WebSocket;
-
+    
     function connect() {
         socket = new WebSocket(url);
 
         socket.onopen = () => update(s => ({...s, status: "open", error: null}));
         socket.onclose = () => update(s => ({...s, status: "closed"}));
-        socket.onerror = (e) => update(s => ({...s, status: "error", error: e}))
+        socket.onerror = (e) => {
+            update(s => ({...s, status: "error", error: e}));
+            islands.error("Could not connect to server");
+        }
 
         socket.onmessage = (event: MessageEvent) => {
             let data: { type: keyof WSEventMap; [key: string]: unknown}
@@ -68,7 +73,8 @@ function createWebSocketConnection(url: string): WebSocketStore {
                 console.log("Failed to parse message event data", event.data)
                 return;
             }
-            const { type, payload } = data; 
+            const { type, payload } = data;
+
             switch (type) {
                 case "InitData":                    
                     handleInitData(payload as WSEventMap[typeof type])
@@ -91,6 +97,7 @@ function createWebSocketConnection(url: string): WebSocketStore {
                 default:
                     break;
             }
+
             // cast to unknown is a bit usafe
             events.dispatchEvent(new TypedMessageEvent(type, payload as unknown as WSEventMap[typeof type]));
         };
